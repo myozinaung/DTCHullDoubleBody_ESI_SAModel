@@ -1,0 +1,25 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+./Allmesh
+
+restore0Dir
+
+
+# runApplication decomposePar
+runParallel -s decompose redistributePar -decompose
+
+runParallel renumberMesh -overwrite
+
+runParallel potentialFoam
+
+runParallel $(getApplication)
+
+# runApplication reconstructPar
+runParallel -s reconstruct redistributePar -reconstruct
+
+touch case.foam
+
+#------------------------------------------------------------------------------
